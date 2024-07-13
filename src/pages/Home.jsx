@@ -1,8 +1,9 @@
 import React from "react"
-import CardData from '../components/CardData'
+import AppClima from "../components/AppClima"
 
 export const Home = () => {
     return (
-       <CardData />
+        <AppClima />
+
     )
 }

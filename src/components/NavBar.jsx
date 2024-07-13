@@ -10,8 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-
+import CloudIcon from '@mui/icons-material/Cloud';
 // se cambia
 const pages = [
   { name: 'Home', path: '/' },
@@ -45,7 +44,7 @@ function NavBar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <CloudIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
@@ -101,7 +100,7 @@ function NavBar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <CloudIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -119,7 +118,7 @@ function NavBar() {
               cursor: 'pointer', // se agrega
             }}
           >
-            SUPERWEB
+            CLIMA APP
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
