@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Box, Container, TextField, Typography } from "@mui/material";
+import { Box, Container, TextField, Typography, Alert, Button } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
 import useFetch from "./useFetch";
 
@@ -8,26 +8,51 @@ import useFetch from "./useFetch";
 export default function AppClima() {
     const [city, setCity] = useState('');
     const [query, setQuery] = useState('');
+    const [inputError, setImputError] = useState(null);
+    const [weather, setWeather] = useState(null);
+    const [retry, setRetry] = useState(false);
+
+    const [apiError, setApiError] = useState(null); // Nuevo estado para el error de la API
     const API_WEATHER = `http://api.weatherapi.com/v1/current.json?key=${import.meta.env.VITE_API_KEY}&q=${query}`;
 
 
     const { data, loading, error } = useFetch(query ? API_WEATHER : null);
 
-    const onSubmit = async (e) => {
+    const onSubmit = (e) => {
         e.preventDefault();
         console.log("submit");
+        if (city.trim() === '') {
+            setImputError('No puede quedar vacio, Ingresa una ciudad');
+            return;
+        }
         setQuery(city);
+        setWeather(null);
+        setImputError(null);
+        setRetry(false);
+        setApiError(null);
     };
 
-    const weather = data &&  data.location && data.current && {
-        city: data.location.name,
-        country: data.location.country,
-        temp: data.current.temp_c,
-        condition: data.current.condition.icon,
-        icon: data.current.condition.icon,
-        conditionText: data.current.condition.text,
-    };
+    if (data && data.location && data.current && !weather) {
+        setWeather({
+            city: data.location.name,
+            country: data.location.country,
+            temp: data.current.temp_c,
+            condition: data.current.condition.icon,
+            icon: data.current.condition.icon,
+            conditionText: data.current.condition.text,
+        });
 
+    }
+    if (error && !apiError) {
+        setApiError(error); // Establecer el error de la API si ocurre
+    }
+    const handleRetry = () => {
+        setCity('');
+        setQuery('');
+        setInputError(null);
+        setRetry(false);
+        setApiError(null);
+    };
     return (
         <Container maxWidth="xs" sx={{ mt: 2 }}>
             <Box
@@ -45,6 +70,8 @@ export default function AppClima() {
                     fullWidth
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
+                    error={!!inputError}
+                    helperText={inputError}
                 />
 
                 <LoadingButton
@@ -56,7 +83,13 @@ export default function AppClima() {
                     Buscar
                 </LoadingButton>
             </Box>
+            {inputError && (
 
+                <Alert severity="error" sx={{ my: 2 }}>
+                    {inputError}
+                </Alert>
+
+            )}
             {weather && (
                 <Box
                     sx={{
@@ -82,11 +115,18 @@ export default function AppClima() {
                         {weather.conditionText}
                     </Typography>
                 </Box>
-            )};
-            {error && (
-                <Typography color="error" textAlign="center" sx={{ mt: 2 }}>
-                    {error.message}
-                </Typography>
+            )}
+            {apiError && (
+
+                <Alert severity="error" sx={{ my: 2 }}>
+                    Error: {apiError.message ? apiError.message : "Error desconocido"}
+                    <Box sx={{ mt: 2 }}>
+                        <Button variant="outlined" onClick={handleRetry}>
+                            Reintentar
+                        </Button>
+                    </Box>
+                </Alert>
+
             )}
             <Typography
                 textAlign="center"
@@ -103,7 +143,5 @@ export default function AppClima() {
             </Typography>
 
         </Container>
-    )
-
-
-};
+    );
+}

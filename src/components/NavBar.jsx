@@ -61,7 +61,7 @@ function NavBar() {
               cursor: 'pointer',  // se agrega
             }}
           >
-            SUPERWEB
+            CLIMAPP
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -118,7 +118,7 @@ function NavBar() {
               cursor: 'pointer', // se agrega
             }}
           >
-            CLIMA APP
+            CLIMAPP
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
