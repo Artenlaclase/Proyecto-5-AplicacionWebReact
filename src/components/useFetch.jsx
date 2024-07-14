@@ -12,7 +12,7 @@ const useFetch = (url) => {
             try {
                 const response = await fetch(url);
                 if (!response.ok) {
-                    throw new Error("Error al obtener la informacion");
+                    throw new Error("Ciudad no existe. Reintentar");
                 }
                 const result = await response.json();
                 setData(result);

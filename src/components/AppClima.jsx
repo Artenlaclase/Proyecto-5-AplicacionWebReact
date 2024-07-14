@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Box, Container, TextField, Typography, Alert, Button } from "@mui/material";
-import LoadingButton from '@mui/lab/LoadingButton';
+import { Container, Typography } from "@mui/material";
+import WeatherSearch from './WeatherSearch';
+import WeatherDisplay from './WeatherDisplay';
+import ErrorMessage from './ErrorMessage';
 import useFetch from "./useFetch";
 
 export default function AppClima() {
@@ -54,85 +56,20 @@ export default function AppClima() {
         setInputError(null);
         setApiError(null);
     };
+
     return (
+
         <Container maxWidth="xs" sx={{ mt: 2 }}>
-            <Box
-                sx={{ display: "grid", gap: 2 }}
-                component="form"
-                autoComplete="off"
+            <WeatherSearch
+                city={city}
+                setCity={setCity}
+                inputError={inputError}
                 onSubmit={onSubmit}
-            >
-                <TextField
-                    id="city"
-                    label="Ciudad"
-                    variant="outlined"
-                    size="small"
-                    required
-                    fullWidth
-                    value={city}
-                    onChange={(e) => {
-                        setCity(e.target.value);
-                        setInputError(null);
-
-                    }}
-                    error={!!inputError}
-                    helperText={inputError}
-                />
-
-                <LoadingButton
-                    type="submit"
-                    variant="contained"
-                    loading={loading}
-                    loadingIndicator="Buscando la Ciudad"
-                >
-                    Buscar
-                </LoadingButton>
-            </Box>
-            {inputError && (
-
-                <Alert severity="error" sx={{ my: 2 }}>
-                    {inputError}
-                </Alert>
-
-            )}
-            {weather && (
-                <Box
-                    sx={{
-                        mt: 2,
-                        display: "grid",
-                        gap: 2,
-                        textAlign: "center",
-                    }}
-                >
-                    <Typography variant="h4" component="h2">
-                        {weather.city}, {weather.country}
-                    </Typography>
-                    <Box
-                        component="img"
-                        alt={weather.conditionText}
-                        src={weather.icon}
-                        sx={{ margin: "0 auto" }}
-                    />
-                    <Typography variant="h5" component="h3">
-                        {weather.temp}°C
-                    </Typography>
-                    <Typography variant="h6" component="h4">
-                        {weather.conditionText}
-                    </Typography>
-                </Box>
-            )}
-            {apiError && (
-
-                <Alert severity="error" sx={{ my: 2 }}>
-                    Error: {apiError.message ? apiError.message : "Error desconocido"}
-                    <Box sx={{ mt: 2 }}>
-                        <Button variant="outlined" onClick={handleRetry}>
-                            Reintentar
-                        </Button>
-                    </Box>
-                </Alert>
-
-            )}
+                loading={loading}
+            />
+            {inputError && <ErrorMessage message={inputError} />}
+            {weather && <WeatherDisplay weather={weather} />}
+            {apiError && <ErrorMessage message={apiError.message ? apiError.message : "Error desconocido"} handleRetry={handleRetry} />}
             <Typography
                 textAlign="center"
                 sx={{ mt: 2, fontSize: "10px" }}
