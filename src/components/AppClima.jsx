@@ -3,8 +3,6 @@ import { Box, Container, TextField, Typography, Alert, Button } from "@mui/mater
 import LoadingButton from '@mui/lab/LoadingButton';
 import useFetch from "./useFetch";
 
-
-
 export default function AppClima() {
     const [city, setCity] = useState('');
     const [query, setQuery] = useState('');
@@ -26,6 +24,7 @@ export default function AppClima() {
                 conditionText: data.current.condition.text,
             });
             setApiError(null); // Limpiar error al recibir datos válidos
+            setCity(''); // Limpiar el campo de ciudad
         }
     }, [data]);
 
