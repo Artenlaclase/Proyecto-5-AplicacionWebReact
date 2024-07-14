@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Box, Container, TextField, Typography, Alert, Button } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
 import useFetch from "./useFetch";
@@ -8,49 +8,51 @@ import useFetch from "./useFetch";
 export default function AppClima() {
     const [city, setCity] = useState('');
     const [query, setQuery] = useState('');
-    const [inputError, setImputError] = useState(null);
+    const [inputError, setInputError] = useState(null);
     const [weather, setWeather] = useState(null);
-    const [retry, setRetry] = useState(false);
+    const [apiError, setApiError] = useState(null);
 
-    const [apiError, setApiError] = useState(null); // Nuevo estado para el error de la API
     const API_WEATHER = `https://api.weatherapi.com/v1/current.json?key=${import.meta.env.VITE_API_KEY}&q=${query}`;
-
-
     const { data, loading, error } = useFetch(query ? API_WEATHER : null);
+
+    useEffect(() => {
+        if (data) {
+            setWeather({
+                city: data.location.name,
+                country: data.location.country,
+                temp: data.current.temp_c,
+                condition: data.current.condition.icon,
+                icon: data.current.condition.icon,
+                conditionText: data.current.condition.text,
+            });
+            setApiError(null); // Limpiar error al recibir datos válidos
+        }
+    }, [data]);
+
+    useEffect(() => {
+        if (error) {
+            setApiError(error);
+            setWeather(null); // Limpiar el clima si hay un error
+        }
+    }, [error]);
 
     const onSubmit = (e) => {
         e.preventDefault();
         console.log("submit");
         if (city.trim() === '') {
-            setImputError('No puede quedar vacio, Ingresa una ciudad');
+            setInputError('No puede quedar vacio, Ingresa una ciudad');
+            setApiError(null);
             return;
         }
         setQuery(city);
         setWeather(null);
-        setImputError(null);
-        setRetry(false);
         setApiError(null);
     };
 
-    if (data && data.location && data.current && !weather) {
-        setWeather({
-            city: data.location.name,
-            country: data.location.country,
-            temp: data.current.temp_c,
-            condition: data.current.condition.icon,
-            icon: data.current.condition.icon,
-            conditionText: data.current.condition.text,
-        });
-
-    }
-    if (error && !apiError) {
-        setApiError(error); // Establecer el error de la API si ocurre
-    }
     const handleRetry = () => {
         setCity('');
         setQuery('');
         setInputError(null);
-        setRetry(false);
         setApiError(null);
     };
     return (
@@ -69,7 +71,11 @@ export default function AppClima() {
                     required
                     fullWidth
                     value={city}
-                    onChange={(e) => setCity(e.target.value)}
+                    onChange={(e) => {
+                        setCity(e.target.value);
+                        setInputError(null);
+
+                    }}
                     error={!!inputError}
                     helperText={inputError}
                 />
