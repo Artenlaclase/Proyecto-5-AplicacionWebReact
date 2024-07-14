@@ -16,7 +16,8 @@ Este proyecto es una aplicación web desarrollada en React utilizando Vite como 
 
 ## Descripción
 
-Esta aplicación permite al usuario buscar información climática de diferentes ciudades utilizando la API de WeatherAPI. La aplicación se compone de varios componentes que están modularizados para mantener un código limpio y organizado. Los componentes principales incluyen la búsqueda de clima, la visualización de resultados, manejo de errores y el diseño de la aplicación.
+Esta aplicación permite al usuario buscar información climática de diferentes ciudades utilizando la API de WeatherAPI. La aplicación se compone de varios componentes que están modularizados para mantener un código limpio y organizado. Los componentes principales incluyen la búsqueda de clima, la visualización de resultados, manejo de errores y el diseño de la aplicación. 
+Para pruebas se despliega https://www.netlify.com/  en el siguiente enlace: https://statuesque-bublanina-427ca6.netlify.app/ 
 
 ## Estructura del Proyecto
 
