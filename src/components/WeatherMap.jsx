@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Card, CardContent, Typography, Box, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import { Map as MapIcon } from '@mui/icons-material';
 import 'leaflet/dist/leaflet.css';
-import { useState } from 'react';
 import L from 'leaflet';
 
 // Configurar iconos de Leaflet
@@ -21,6 +20,37 @@ function MapUpdater({ center }) {
     useEffect(() => {
         map.setView(center, map.getZoom());
     }, [center, map]);
+
+    return null;
+}
+
+// Componente para manejar cambios de capa dinámica
+function WeatherLayerUpdater({ layerUrl }) {
+    const map = useMap();
+    const layerRef = useRef(null);
+
+    useEffect(() => {
+        // Remover capa anterior si existe
+        if (layerRef.current) {
+            map.removeLayer(layerRef.current);
+        }
+
+        // Crear nueva capa meteorológica
+        layerRef.current = L.tileLayer(layerUrl, {
+            attribution: '&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>',
+            opacity: 0.6,
+        });
+
+        // Agregar nueva capa al mapa
+        layerRef.current.addTo(map);
+
+        // Cleanup: remover capa cuando el componente se desmonte
+        return () => {
+            if (layerRef.current) {
+                map.removeLayer(layerRef.current);
+            }
+        };
+    }, [layerUrl, map]);
 
     return null;
 }
@@ -105,11 +135,7 @@ export default function WeatherMap({ lat, lon, city, country }) {
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
-                        <TileLayer
-                            url={layers[mapLayer].url}
-                            attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
-                            opacity={0.6}
-                        />
+                        <WeatherLayerUpdater layerUrl={layers[mapLayer].url} />
                         <Marker position={position}>
                             <Popup>
                                 <strong>{city}</strong><br/>
