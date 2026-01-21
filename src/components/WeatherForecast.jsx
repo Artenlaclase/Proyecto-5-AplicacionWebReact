@@ -61,14 +61,22 @@ export default function WeatherForecast({ forecast }) {
                                 </Box>
 
                                 {/* Icono y condición */}
-                                <Box sx={{ flex: '1', display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Box sx={{ flex: '1', display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                                     <Box
                                         component="img"
                                         src={day.icon}
                                         alt={day.condition}
-                                        sx={{ width: 40, height: 40 }}
+                                        sx={{ width: 40, height: 40, flexShrink: 0 }}
                                     />
-                                    <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
+                                    <Typography 
+                                        variant="body2" 
+                                        sx={{ 
+                                            display: { xs: 'none', sm: 'block' },
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                    >
                                         {day.condition}
                                     </Typography>
                                 </Box>
@@ -78,7 +86,7 @@ export default function WeatherForecast({ forecast }) {
                                     display: 'flex', 
                                     alignItems: 'center', 
                                     gap: 1,
-                                    flex: '0 0 100px',
+                                    flex: '0 0 90px',
                                     justifyContent: 'flex-end'
                                 }}>
                                     <Typography variant="body2" fontWeight="bold" color="error.main">
@@ -91,9 +99,9 @@ export default function WeatherForecast({ forecast }) {
 
                                 {/* Info adicional */}
                                 <Box sx={{ 
-                                    display: { xs: 'none', md: 'flex' }, 
+                                    display: { xs: 'none', lg: 'flex' }, 
                                     gap: 2,
-                                    flex: '0 0 150px',
+                                    flex: '0 0 140px',
                                     justifyContent: 'flex-end',
                                     alignItems: 'center'
                                 }}>
