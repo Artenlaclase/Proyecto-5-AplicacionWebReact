@@ -24,6 +24,7 @@ export default function WeatherSearch({ city, setCity, inputError, onSubmit, loa
                 }}
                 error={!!inputError}
                 helperText={inputError}
+                placeholder="Ej: Santiago, Chile"
             />
             <LoadingButton
                 type="submit"

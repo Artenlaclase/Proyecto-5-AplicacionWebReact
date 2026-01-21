@@ -3,8 +3,10 @@ import { Box, Typography, Card, CardContent, Grid, Divider } from "@mui/material
 import AirIcon from '@mui/icons-material/Air';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
+import { getCountryFlag } from '../utils/countryFlags';
 
 export default function WeatherDisplay({ weather }) {
+    const flag = getCountryFlag(weather.country);
     return (
         <Card
             sx={{
@@ -21,6 +23,9 @@ export default function WeatherDisplay({ weather }) {
                         textAlign: "center",
                     }}
                 >
+                    <Box sx={{ fontSize: '3rem' }}>
+                        {flag}
+                    </Box>
                     <Typography variant="h4" component="h2" fontWeight="bold">
                         {weather.city}
                     </Typography>

@@ -4,7 +4,9 @@ import WeatherSearch from './WeatherSearch';
 import WeatherDisplay from './WeatherDisplay';
 import ErrorMessage from './ErrorMessage';
 import LocationSelector from './LocationSelector';
+import RecentSearches from './RecentSearches';
 import useFetch from "./useFetch";
+import { getCountryFlag } from '../utils/countryFlags';
 
 export default function AppClima() {
     const [city, setCity] = useState('');
@@ -15,6 +17,7 @@ export default function AppClima() {
     const [apiError, setApiError] = useState(null);
     const [locations, setLocations] = useState([]);
     const [showLocationSelector, setShowLocationSelector] = useState(false);
+    const [recentSearches, setRecentSearches] = useState([]);
 
     // API de búsqueda de ubicaciones
     const SEARCH_API = `https://api.weatherapi.com/v1/search.json?key=${import.meta.env.VITE_API_KEY}&q=${searchQuery}`;
@@ -23,9 +26,43 @@ export default function AppClima() {
     const { data: searchData, loading: searchLoading, error: searchError } = useFetch(searchQuery ? SEARCH_API : null);
     const { data, loading, error } = useFetch(weatherQuery ? API_WEATHER : null);
 
+    // Cargar búsquedas recientes al iniciar
+    useEffect(() => {
+        const saved = localStorage.getItem('recentWeatherSearches');
+        if (saved) {
+            setRecentSearches(JSON.parse(saved));
+        }
+    }, []);
+
+    // Guardar búsqueda reciente
+    const saveRecentSearch = (weatherData) => {
+        const newSearch = {
+            city: weatherData.city,
+            country: weatherData.country,
+            region: weatherData.region,
+            flag: getCountryFlag(weatherData.country),
+            lat: weatherData.lat,
+            lon: weatherData.lon,
+            timestamp: Date.now(),
+        };
+
+        const updated = [
+            newSearch,
+            ...recentSearches.filter(s => 
+                !(s.city === newSearch.city && s.country === newSearch.country)
+            )
+        ].slice(0, 5); // Mantener solo las últimas 5
+
+        setRecentSearches(updated);
+        localStorage.setItem('recentWeatherSearches', JSON.stringify(updated));
+    };
+
     // Efecto para manejar los resultados de búsqueda de ubicaciones
     useEffect(() => {
         if (searchData) {
+            console.log('Resultados de búsqueda:', searchData);
+            console.log('Número de ubicaciones encontradas:', searchData.length);
+            
             if (Array.isArray(searchData) && searchData.length >= 1) {
                 // Ubicaciones encontradas - siempre mostrar selector para elegir
                 setLocations(searchData);
@@ -50,7 +87,7 @@ export default function AppClima() {
 
     useEffect(() => {
         if (data) {
-            setWeather({
+            const weatherData = {
                 city: data.location.name,
                 country: data.location.country,
                 region: data.location.region,
@@ -62,7 +99,12 @@ export default function AppClima() {
                 windDir: data.current.wind_dir,
                 humidity: data.current.humidity,
                 feelsLike: data.current.feelslike_c,
-            });
+                lat: data.location.lat,
+                lon: data.location.lon,
+            };
+            
+            setWeather(weatherData);
+            saveRecentSearch(weatherData);
             setApiError(null); // Limpiar error al recibir datos válidos
             setCity(''); // Limpiar el campo de ciudad
             setShowLocationSelector(false); // Ocultar selector de ubicaciones
@@ -110,6 +152,18 @@ export default function AppClima() {
         setShowLocationSelector(false);
     };
 
+    const handleSelectRecentSearch = (search) => {
+        // Cargar clima desde búsqueda reciente usando coordenadas
+        setWeatherQuery(`${search.lat},${search.lon}`);
+        setShowLocationSelector(false);
+        setApiError(null);
+    };
+
+    const handleClearRecentSearches = () => {
+        setRecentSearches([]);
+        localStorage.removeItem('recentWeatherSearches');
+    };
+
     return (
 
         <Container maxWidth="xs" sx={{ mt: 2 }}>
@@ -121,6 +175,11 @@ export default function AppClima() {
                 loading={loading || searchLoading}
             />
             {inputError && <ErrorMessage message={inputError} />}
+            <RecentSearches 
+                searches={recentSearches}
+                onSelectSearch={handleSelectRecentSearch}
+                onClearAll={handleClearRecentSearches}
+            />
             {showLocationSelector && <LocationSelector locations={locations} onSelectLocation={handleSelectLocation} />}
             {weather && <WeatherDisplay weather={weather} />}
             {apiError && <ErrorMessage message={apiError.message ? apiError.message : "Error desconocido"} handleRetry={handleRetry} />}

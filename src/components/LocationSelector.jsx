@@ -1,6 +1,8 @@
 import React from 'react';
-import { Box, Typography, List, ListItem, ListItemButton, ListItemText, Paper } from "@mui/material";
+import { Box, Typography, List, ListItem, ListItemButton, ListItemText, Paper, Alert } from "@mui/material";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import InfoIcon from '@mui/icons-material/Info';
+import { getCountryFlag } from '../utils/countryFlags';
 
 export default function LocationSelector({ locations, onSelectLocation }) {
     return (
@@ -42,6 +44,9 @@ export default function LocationSelector({ locations, onSelectLocation }) {
                                 }
                             }}
                         >
+                            <Box sx={{ mr: 2, fontSize: '2rem' }}>
+                                {getCountryFlag(location.country)}
+                            </Box>
                             <ListItemText
                                 primary={
                                     <Typography variant="body1" fontWeight="medium">
@@ -58,6 +63,12 @@ export default function LocationSelector({ locations, onSelectLocation }) {
                     </ListItem>
                 ))}
             </List>
+            <Alert severity="info" icon={<InfoIcon />} sx={{ mt: 2, fontSize: '0.85rem' }}>
+                <Typography variant="caption">
+                    <strong>💡 Consejo:</strong> ¿No encuentras tu ciudad? Intenta buscar con el país. 
+                    <br />Ejemplo: <em>"Navidad Chile"</em> o <em>"Santiago Chile"</em>
+                </Typography>
+            </Alert>
         </Paper>
     );
 }
