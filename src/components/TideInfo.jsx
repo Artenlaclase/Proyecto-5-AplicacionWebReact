@@ -7,20 +7,45 @@ import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 export default function TideInfo({ tideData }) {
     if (!tideData || !tideData.extremes || tideData.extremes.length === 0) return null;
 
-    const formatTime = (timestamp) => {
-        // El timestamp ya viene en segundos Unix, lo convertimos a milisegundos
-        const date = new Date(timestamp * 1000);
+    const formatTime = (tide) => {
+        // Intentar con diferentes propiedades que la API podría usar
+        let timestamp = tide.dt || tide.timestamp || tide.time;
         
-        // Verificar si la fecha es válida
-        if (isNaN(date.getTime())) {
+        if (!timestamp) {
+            console.log('No se encontró timestamp en:', tide);
             return 'Hora no disponible';
         }
         
-        return date.toLocaleTimeString('es-CL', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: false
-        });
+        // Si el timestamp es un número (Unix timestamp)
+        if (typeof timestamp === 'number') {
+            // Los timestamps de WorldTides vienen en segundos Unix
+            const date = new Date(timestamp * 1000);
+            
+            console.log('Timestamp:', timestamp, 'Fecha convertida:', date.toString());
+            
+            if (!isNaN(date.getTime())) {
+                return date.toLocaleTimeString('es-CL', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: false
+                });
+            }
+        }
+        
+        // Si el timestamp es un string de fecha ISO
+        if (typeof timestamp === 'string') {
+            const date = new Date(timestamp);
+            if (!isNaN(date.getTime())) {
+                return date.toLocaleTimeString('es-CL', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: false
+                });
+            }
+        }
+        
+        console.log('No se pudo convertir timestamp:', timestamp);
+        return 'Hora no disponible';
     };
 
     const getTideIcon = (type) => {
@@ -86,7 +111,7 @@ export default function TideInfo({ tideData }) {
                                             {getTideLabel(tide.type)}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary" fontWeight="medium">
-                                            {formatTime(tide.timestamp)}
+                                            {formatTime(tide)}
                                         </Typography>
                                     </Box>
                                 </Box>

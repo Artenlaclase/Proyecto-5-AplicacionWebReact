@@ -8,9 +8,32 @@ export default function WeatherForecast({ forecast }) {
     if (!forecast || !forecast.length) return null;
 
     const getDayName = (dateStr) => {
-        const date = new Date(dateStr);
+        const date = new Date(dateStr + 'T00:00:00');
         const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
         return days[date.getDay()];
+    };
+
+    const isToday = (dateStr) => {
+        const date = new Date(dateStr + 'T00:00:00');
+        const today = new Date();
+        return date.getDate() === today.getDate() &&
+               date.getMonth() === today.getMonth() &&
+               date.getFullYear() === today.getFullYear();
+    };
+
+    const isTomorrow = (dateStr) => {
+        const date = new Date(dateStr + 'T00:00:00');
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return date.getDate() === tomorrow.getDate() &&
+               date.getMonth() === tomorrow.getMonth() &&
+               date.getFullYear() === tomorrow.getFullYear();
+    };
+
+    const getDayLabel = (dateStr) => {
+        if (isToday(dateStr)) return 'Hoy';
+        if (isTomorrow(dateStr)) return 'Mañana';
+        return getDayName(dateStr);
     };
 
     return (
@@ -53,10 +76,10 @@ export default function WeatherForecast({ forecast }) {
                                 {/* Día */}
                                 <Box sx={{ flex: '0 0 60px' }}>
                                     <Typography variant="body2" fontWeight="bold">
-                                        {index === 0 ? 'Hoy' : getDayName(day.date)}
+                                        {getDayLabel(day.date)}
                                     </Typography>
                                     <Typography variant="caption" color="text.secondary">
-                                        {new Date(day.date).getDate()}/{new Date(day.date).getMonth() + 1}
+                                        {new Date(day.date + 'T00:00:00').getDate()}/{new Date(day.date + 'T00:00:00').getMonth() + 1}
                                     </Typography>
                                 </Box>
 

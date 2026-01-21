@@ -3,7 +3,7 @@ import { Container, Typography, Grid } from "@mui/material";
 import WeatherSearch from './WeatherSearch';
 import WeatherDisplay from './WeatherDisplay';
 import WeatherForecast from './WeatherForecast';
-import TideInfo from './TideInfo';
+import MarineInfo from './MarineInfo';
 import ErrorMessage from './ErrorMessage';
 import LocationSelector from './LocationSelector';
 import RecentSearches from './RecentSearches';
@@ -17,7 +17,7 @@ export default function AppClima() {
     const [inputError, setInputError] = useState(null);
     const [weather, setWeather] = useState(null);
     const [forecast, setForecast] = useState([]);
-    const [tideData, setTideData] = useState(null);
+    const [marineData, setMarineData] = useState(null);
     const [apiError, setApiError] = useState(null);
     const [locations, setLocations] = useState([]);
     const [showLocationSelector, setShowLocationSelector] = useState(false);
@@ -122,8 +122,8 @@ export default function AppClima() {
             setForecast(forecastData);
             saveRecentSearch(weatherData);
             
-            // Intentar obtener información de mareas si está cerca de la costa
-            fetchTideData(data.location.lat, data.location.lon);
+            // Intentar obtener información marina si está cerca de la costa
+            fetchMarineData(data.location.lat, data.location.lon, weatherData);
             
             setApiError(null); // Limpiar error al recibir datos válidos
             setCity(''); // Limpiar el campo de ciudad
@@ -131,40 +131,52 @@ export default function AppClima() {
         }
     }, [data]);
 
-    // Función para obtener datos de mareas
-    const fetchTideData = async (lat, lon) => {
+    // Función para obtener datos marinos (mareas y olas)
+    const fetchMarineData = async (lat, lon, currentWeather) => {
         try {
-            // Usar API pública de mareas (ejemplo con WorldTides - requiere API key)
-            // Para demostración, usaremos datos simulados si no hay API key de mareas
             const tideApiKey = import.meta.env.VITE_TIDE_API_KEY;
             
             if (!tideApiKey) {
-                // Si no hay API key de mareas, no mostrar información
-                setTideData(null);
+                setMarineData(null);
                 return;
             }
 
             const today = new Date();
             const start = Math.floor(today.getTime() / 1000);
-            const end = start + 86400; // 24 horas
 
+            // Obtener datos de mareas de WorldTides
             const response = await fetch(
                 `https://www.worldtides.info/api/v3?extremes&lat=${lat}&lon=${lon}&start=${start}&length=86400&key=${tideApiKey}`
             );
 
             if (response.ok) {
                 const data = await response.json();
+                console.log('Datos marinos recibidos:', data);
+                
                 if (data.extremes && data.extremes.length > 0) {
-                    setTideData(data);
+                    // Calcular altura de olas estimada basada en viento
+                    // Fórmula simple: altura_olas = velocidad_viento * 0.05 (aproximación)
+                    const windSpeed = currentWeather.windKph;
+                    const estimatedWaveHeight = windSpeed * 0.03; // 3cm por km/h de viento
+                    const estimatedWavePeriod = Math.min(12, Math.max(4, windSpeed * 0.15)); // Entre 4 y 12 segundos
+                    
+                    setMarineData({
+                        tides: data.extremes,
+                        waveHeight: estimatedWaveHeight,
+                        wavePeriod: estimatedWavePeriod.toFixed(0),
+                        windSpeed: currentWeather.windKph,
+                        windDirection: currentWeather.windDir,
+                    });
                 } else {
-                    setTideData(null); // No hay datos de mareas (ubicación no costera)
+                    setMarineData(null);
                 }
             } else {
-                setTideData(null);
+                console.log('Error en respuesta de API marina:', response.status);
+                setMarineData(null);
             }
         } catch (error) {
-            console.log('No se pudo obtener información de mareas:', error);
-            setTideData(null);
+            console.log('No se pudo obtener información marina:', error);
+            setMarineData(null);
         }
     };
 
@@ -250,9 +262,9 @@ export default function AppClima() {
                     <Grid item xs={12} md={7}>
                         {forecast.length > 0 && <WeatherForecast forecast={forecast} />}
                     </Grid>
-                    {tideData && (
+                    {marineData && (
                         <Grid item xs={12}>
-                            <TideInfo tideData={tideData} />
+                            <MarineInfo marineData={marineData} />
                         </Grid>
                     )}
                 </Grid>
@@ -269,7 +281,7 @@ export default function AppClima() {
                 >
                     WeatherAPI.com
                 </a>
-                {tideData && (
+                {marineData && (
                     <>
                         {" | "}
                         <a
