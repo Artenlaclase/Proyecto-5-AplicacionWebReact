@@ -3,6 +3,7 @@ import { Container, Typography, Grid } from "@mui/material";
 import WeatherSearch from './WeatherSearch';
 import WeatherDisplay from './WeatherDisplay';
 import WeatherForecast from './WeatherForecast';
+import TideInfo from './TideInfo';
 import ErrorMessage from './ErrorMessage';
 import LocationSelector from './LocationSelector';
 import RecentSearches from './RecentSearches';
@@ -16,6 +17,7 @@ export default function AppClima() {
     const [inputError, setInputError] = useState(null);
     const [weather, setWeather] = useState(null);
     const [forecast, setForecast] = useState([]);
+    const [tideData, setTideData] = useState(null);
     const [apiError, setApiError] = useState(null);
     const [locations, setLocations] = useState([]);
     const [showLocationSelector, setShowLocationSelector] = useState(false);
@@ -119,11 +121,52 @@ export default function AppClima() {
             setWeather(weatherData);
             setForecast(forecastData);
             saveRecentSearch(weatherData);
+            
+            // Intentar obtener información de mareas si está cerca de la costa
+            fetchTideData(data.location.lat, data.location.lon);
+            
             setApiError(null); // Limpiar error al recibir datos válidos
             setCity(''); // Limpiar el campo de ciudad
             setShowLocationSelector(false); // Ocultar selector de ubicaciones
         }
     }, [data]);
+
+    // Función para obtener datos de mareas
+    const fetchTideData = async (lat, lon) => {
+        try {
+            // Usar API pública de mareas (ejemplo con WorldTides - requiere API key)
+            // Para demostración, usaremos datos simulados si no hay API key de mareas
+            const tideApiKey = import.meta.env.VITE_TIDE_API_KEY;
+            
+            if (!tideApiKey) {
+                // Si no hay API key de mareas, no mostrar información
+                setTideData(null);
+                return;
+            }
+
+            const today = new Date();
+            const start = Math.floor(today.getTime() / 1000);
+            const end = start + 86400; // 24 horas
+
+            const response = await fetch(
+                `https://www.worldtides.info/api/v3?extremes&lat=${lat}&lon=${lon}&start=${start}&length=86400&key=${tideApiKey}`
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.extremes && data.extremes.length > 0) {
+                    setTideData(data);
+                } else {
+                    setTideData(null); // No hay datos de mareas (ubicación no costera)
+                }
+            } else {
+                setTideData(null);
+            }
+        } catch (error) {
+            console.log('No se pudo obtener información de mareas:', error);
+            setTideData(null);
+        }
+    };
 
     useEffect(() => {
         if (error) {
@@ -207,12 +250,17 @@ export default function AppClima() {
                     <Grid item xs={12} md={7}>
                         {forecast.length > 0 && <WeatherForecast forecast={forecast} />}
                     </Grid>
+                    {tideData && (
+                        <Grid item xs={12}>
+                            <TideInfo tideData={tideData} />
+                        </Grid>
+                    )}
                 </Grid>
             )}
 
             <Typography
                 textAlign="center"
-                sx={{ mt: 2, fontSize: "10px" }}
+                sx={{ mt: 4, mb: 2, fontSize: "10px" }}
             >
                 Powered by: {" "}
                 <a
@@ -221,7 +269,17 @@ export default function AppClima() {
                 >
                     WeatherAPI.com
                 </a>
-
+                {tideData && (
+                    <>
+                        {" | "}
+                        <a
+                            href="https://www.worldtides.info/"
+                            title="World Tides"
+                        >
+                            WorldTides.info
+                        </a>
+                    </>
+                )}
             </Typography>
 
         </Container>

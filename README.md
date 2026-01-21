@@ -33,7 +33,8 @@ Para pruebas se despliega en [Netlify](https://www.netlify.com/) en el siguiente
 - 🌡️ Información detallada de temperatura actual
 - 💨 Datos de viento (velocidad y dirección)
 - 📅 Pronóstico extendido de 3 días con temperaturas máximas y mínimas
-- 🏴 Banderas de países para identificación visual
+- � Información de mareas para ubicaciones costeras (opcional)
+- �🏴 Banderas de países para identificación visual
 - 🕐 Historial de búsquedas recientes (almacenado localmente)
 - 🎨 Interfaz moderna con Material-UI
 - 📱 Diseño responsive
@@ -141,6 +142,14 @@ Sigue estos pasos para instalar y ejecutar la aplicación en tu entorno local:
    ```env
    VITE_API_KEY=tu_clave_api
    ```
+   
+   **Opcional - Para información de mareas:**
+   ```env
+   VITE_TIDE_API_KEY=tu_clave_tide_api
+   ```
+   Obtén tu API key gratuita de WorldTides en: [https://www.worldtides.info/register](https://www.worldtides.info/register)
+   
+   *Nota: La información de mareas solo se mostrará para ubicaciones costeras y si tienes configurada la API key de WorldTides.*
 
 4. **Ejecutar la aplicación**
    ```bash
@@ -164,6 +173,7 @@ Sigue estos pasos para instalar y ejecutar la aplicación en tu entorno local:
    - **Humedad** porcentual
    - **Sensación térmica**
    - **Pronóstico de 3 días** con temperaturas máximas y mínimas, condiciones climáticas y datos adicionales
+   - **Información de mareas** (si la ubicación es costera y tienes configurada la API de mareas)
 
 3. **Selección de Ubicaciones Múltiples**
    - Cuando hay ciudades con el mismo nombre en diferentes países o regiones, la aplicación muestra todas las opciones disponibles.
