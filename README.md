@@ -32,7 +32,7 @@ Para pruebas se despliega en [Netlify](https://www.netlify.com/) en el siguiente
 - 🌍 Soporte para múltiples ubicaciones con el mismo nombre
 - 🌡️ Información detallada de temperatura actual
 - 💨 Datos de viento (velocidad y dirección)
-- 📅 Pronóstico extendido de 7 días con temperaturas máximas y mínimas
+- 📅 Pronóstico extendido de 3 días con temperaturas máximas y mínimas
 - 🏴 Banderas de países para identificación visual
 - 🕐 Historial de búsquedas recientes (almacenado localmente)
 - 🎨 Interfaz moderna con Material-UI
@@ -98,10 +98,11 @@ La aplicación consume los siguientes datos de la API:
 
 3. **Forecast API** - Para obtener pronóstico extendido
    ```
-   https://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={ciudad_o_coordenadas}&days=7
+   https://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={ciudad_o_coordenadas}&days=3
    ```
-   - Retorna pronóstico del tiempo hasta 7 días
-   - Incluye: temperaturas máximas/mínimas, condiciones climáticas, viento, humedad promedio 
+   - Retorna pronóstico del tiempo hasta 3 días (plan gratuito)
+   - Incluye: temperaturas máximas/mínimas, condiciones climáticas, viento, humedad promedio
+   - *Nota: El plan gratuito de WeatherAPI permite hasta 3 días de pronóstico* 
 
 ## Estructura del Proyecto
 
@@ -162,7 +163,7 @@ Sigue estos pasos para instalar y ejecutar la aplicación en tu entorno local:
    - **Información de viento**: velocidad (km/h) y dirección
    - **Humedad** porcentual
    - **Sensación térmica**
-   - **Pronóstico de 7 días** con temperaturas máximas y mínimas, condiciones climáticas y datos adicionales
+   - **Pronóstico de 3 días** con temperaturas máximas y mínimas, condiciones climáticas y datos adicionales
 
 3. **Selección de Ubicaciones Múltiples**
    - Cuando hay ciudades con el mismo nombre en diferentes países o regiones, la aplicación muestra todas las opciones disponibles.

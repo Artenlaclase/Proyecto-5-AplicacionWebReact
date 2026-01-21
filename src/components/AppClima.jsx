@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Grid } from "@mui/material";
 import WeatherSearch from './WeatherSearch';
 import WeatherDisplay from './WeatherDisplay';
 import WeatherForecast from './WeatherForecast';
@@ -23,7 +23,7 @@ export default function AppClima() {
 
     // API de búsqueda de ubicaciones
     const SEARCH_API = `https://api.weatherapi.com/v1/search.json?key=${import.meta.env.VITE_API_KEY}&q=${searchQuery}`;
-    const API_WEATHER = `https://api.weatherapi.com/v1/forecast.json?key=${import.meta.env.VITE_API_KEY}&q=${weatherQuery}&days=7`;
+    const API_WEATHER = `https://api.weatherapi.com/v1/forecast.json?key=${import.meta.env.VITE_API_KEY}&q=${weatherQuery}&days=3`;
     
     const { data: searchData, loading: searchLoading, error: searchError } = useFetch(searchQuery ? SEARCH_API : null);
     const { data, loading, error } = useFetch(weatherQuery ? API_WEATHER : null);
@@ -180,24 +180,36 @@ export default function AppClima() {
 
     return (
 
-        <Container maxWidth="xs" sx={{ mt: 2, mb: 4 }}>
-            <WeatherSearch
-                city={city}
-                setCity={setCity}
-                inputError={inputError}
-                onSubmit={onSubmit}
-                loading={loading || searchLoading}
-            />
-            {inputError && <ErrorMessage message={inputError} />}
-            <RecentSearches 
-                searches={recentSearches}
-                onSelectSearch={handleSelectRecentSearch}
-                onClearAll={handleClearRecentSearches}
-            />
-            {showLocationSelector && <LocationSelector locations={locations} onSelectLocation={handleSelectLocation} />}
-            {weather && <WeatherDisplay weather={weather} />}
-            {forecast.length > 0 && <WeatherForecast forecast={forecast} />}
-            {apiError && <ErrorMessage message={apiError.message ? apiError.message : "Error desconocido"} handleRetry={handleRetry} />}
+        <Container maxWidth="lg" sx={{ mt: 2, mb: 4 }}>
+            <Container maxWidth="xs" sx={{ mb: 3 }}>
+                <WeatherSearch
+                    city={city}
+                    setCity={setCity}
+                    inputError={inputError}
+                    onSubmit={onSubmit}
+                    loading={loading || searchLoading}
+                />
+                {inputError && <ErrorMessage message={inputError} />}
+                <RecentSearches 
+                    searches={recentSearches}
+                    onSelectSearch={handleSelectRecentSearch}
+                    onClearAll={handleClearRecentSearches}
+                />
+                {showLocationSelector && <LocationSelector locations={locations} onSelectLocation={handleSelectLocation} />}
+                {apiError && <ErrorMessage message={apiError.message ? apiError.message : "Error desconocido"} handleRetry={handleRetry} />}
+            </Container>
+
+            {weather && (
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={5}>
+                        <WeatherDisplay weather={weather} />
+                    </Grid>
+                    <Grid item xs={12} md={7}>
+                        {forecast.length > 0 && <WeatherForecast forecast={forecast} />}
+                    </Grid>
+                </Grid>
+            )}
+
             <Typography
                 textAlign="center"
                 sx={{ mt: 2, fontSize: "10px" }}

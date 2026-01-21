@@ -14,7 +14,7 @@ export default function WeatherForecast({ forecast }) {
     };
 
     return (
-        <Card sx={{ mt: 3, boxShadow: 2 }}>
+        <Card sx={{ boxShadow: 2, height: '100%' }}>
             <CardContent>
                 <Typography 
                     variant="h6" 
@@ -29,7 +29,7 @@ export default function WeatherForecast({ forecast }) {
                     }}
                 >
                     <WbSunnyIcon />
-                    Pronóstico de 7 días
+                    Pronóstico de {forecast.length} días
                 </Typography>
                 
                 <Grid container spacing={1.5} sx={{ mt: 1 }}>
