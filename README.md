@@ -32,6 +32,9 @@ Para pruebas se despliega en [Netlify](https://www.netlify.com/) en el siguiente
 - 🌍 Soporte para múltiples ubicaciones con el mismo nombre
 - 🌡️ Información detallada de temperatura actual
 - 💨 Datos de viento (velocidad y dirección)
+- 📅 Pronóstico extendido de 7 días con temperaturas máximas y mínimas
+- 🏴 Banderas de países para identificación visual
+- 🕐 Historial de búsquedas recientes (almacenado localmente)
 - 🎨 Interfaz moderna con Material-UI
 - 📱 Diseño responsive
 - ⚡ Manejo de errores y estados de carga
@@ -91,7 +94,14 @@ La aplicación consume los siguientes datos de la API:
    https://api.weatherapi.com/v1/current.json?key={API_KEY}&q={ciudad_o_coordenadas}
    ```
    - Retorna datos completos del clima actual
-   - Incluye: temperatura, condición, viento, humedad, sensación térmica 
+   - Incluye: temperatura, condición, viento, humedad, sensación térmica
+
+3. **Forecast API** - Para obtener pronóstico extendido
+   ```
+   https://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={ciudad_o_coordenadas}&days=7
+   ```
+   - Retorna pronóstico del tiempo hasta 7 días
+   - Incluye: temperaturas máximas/mínimas, condiciones climáticas, viento, humedad promedio 
 
 ## Estructura del Proyecto
 
@@ -104,8 +114,10 @@ En la carpeta `src` se encuentra la carpeta `components` que contiene los siguie
 - `Layout.jsx`: Componente de diseño general de la aplicación.
 - `LocationSelector.jsx`: Componente para seleccionar entre múltiples ubicaciones con el mismo nombre.
 - `NavBar.jsx`: Componente de la barra de navegación.
+- `RecentSearches.jsx`: Componente para mostrar y gestionar las búsquedas recientes.
 - `useFetch.jsx`: Hook personalizado para realizar solicitudes a la API.
 - `WeatherDisplay.jsx`: Componente para mostrar la información completa del clima (temperatura, viento, humedad, etc.).
+- `WeatherForecast.jsx`: Componente para mostrar el pronóstico extendido de 7 días.
 - `WeatherSearch.jsx`: Componente de búsqueda con validación de entrada.
 
 ## Instalación
@@ -150,6 +162,7 @@ Sigue estos pasos para instalar y ejecutar la aplicación en tu entorno local:
    - **Información de viento**: velocidad (km/h) y dirección
    - **Humedad** porcentual
    - **Sensación térmica**
+   - **Pronóstico de 7 días** con temperaturas máximas y mínimas, condiciones climáticas y datos adicionales
 
 3. **Selección de Ubicaciones Múltiples**
    - Cuando hay ciudades con el mismo nombre en diferentes países o regiones, la aplicación muestra todas las opciones disponibles.
@@ -183,13 +196,14 @@ Este proyecto demuestra el uso de React con Vite para crear una aplicación web 
 
 ## 🚀 Mejoras Futuras
 
-- [ ] Implementar pronóstico del tiempo para varios días
-- [ ] Agregar gráficos de temperatura
-- [ ] Guardar ciudades favoritas en LocalStorage
+- [ ] Gráficos de temperatura para el pronóstico
+- [ ] Notificaciones de alertas meteorológicas
+- [ ] Compartir pronóstico en redes sociales
 - [ ] Modo oscuro/claro
 - [ ] Geolocalización automática
 - [ ] Animaciones de transición entre estados
 - [ ] Soporte para múltiples idiomas
+- [ ] Widget de clima para otras aplicaciones
 
 ## 📄 Licencia
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Container, Typography } from "@mui/material";
 import WeatherSearch from './WeatherSearch';
 import WeatherDisplay from './WeatherDisplay';
+import WeatherForecast from './WeatherForecast';
 import ErrorMessage from './ErrorMessage';
 import LocationSelector from './LocationSelector';
 import RecentSearches from './RecentSearches';
@@ -14,6 +15,7 @@ export default function AppClima() {
     const [weatherQuery, setWeatherQuery] = useState('');
     const [inputError, setInputError] = useState(null);
     const [weather, setWeather] = useState(null);
+    const [forecast, setForecast] = useState([]);
     const [apiError, setApiError] = useState(null);
     const [locations, setLocations] = useState([]);
     const [showLocationSelector, setShowLocationSelector] = useState(false);
@@ -21,7 +23,7 @@ export default function AppClima() {
 
     // API de búsqueda de ubicaciones
     const SEARCH_API = `https://api.weatherapi.com/v1/search.json?key=${import.meta.env.VITE_API_KEY}&q=${searchQuery}`;
-    const API_WEATHER = `https://api.weatherapi.com/v1/current.json?key=${import.meta.env.VITE_API_KEY}&q=${weatherQuery}`;
+    const API_WEATHER = `https://api.weatherapi.com/v1/forecast.json?key=${import.meta.env.VITE_API_KEY}&q=${weatherQuery}&days=7`;
     
     const { data: searchData, loading: searchLoading, error: searchError } = useFetch(searchQuery ? SEARCH_API : null);
     const { data, loading, error } = useFetch(weatherQuery ? API_WEATHER : null);
@@ -103,7 +105,19 @@ export default function AppClima() {
                 lon: data.location.lon,
             };
             
+            // Procesar pronóstico de 7 días
+            const forecastData = data.forecast.forecastday.map(day => ({
+                date: day.date,
+                maxTemp: day.day.maxtemp_c,
+                minTemp: day.day.mintemp_c,
+                condition: day.day.condition.text,
+                icon: day.day.condition.icon,
+                windKph: day.day.maxwind_kph,
+                humidity: day.day.avghumidity,
+            }));
+            
             setWeather(weatherData);
+            setForecast(forecastData);
             saveRecentSearch(weatherData);
             setApiError(null); // Limpiar error al recibir datos válidos
             setCity(''); // Limpiar el campo de ciudad
@@ -182,6 +196,7 @@ export default function AppClima() {
             />
             {showLocationSelector && <LocationSelector locations={locations} onSelectLocation={handleSelectLocation} />}
             {weather && <WeatherDisplay weather={weather} />}
+            {forecast.length > 0 && <WeatherForecast forecast={forecast} />}
             {apiError && <ErrorMessage message={apiError.message ? apiError.message : "Error desconocido"} handleRetry={handleRetry} />}
             <Typography
                 textAlign="center"
