@@ -5,14 +5,14 @@ import { Link } from "react-router-dom"; // Asegúrate de tener react-router-dom
 export const Footer = () => {
   return (
     <Box
+      component="footer"
       sx={{
         width: "100%",
         height: "auto",
         backgroundColor: "primary.main",
         paddingTop: "1rem",
         paddingBottom: "1rem",
-        position: "absolute",
-        bottom: 0,
+        mt: "auto",
       }}
     >
       <Container maxWidth="lg">

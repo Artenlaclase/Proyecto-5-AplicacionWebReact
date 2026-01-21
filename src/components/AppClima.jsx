@@ -166,7 +166,7 @@ export default function AppClima() {
 
     return (
 
-        <Container maxWidth="xs" sx={{ mt: 2 }}>
+        <Container maxWidth="xs" sx={{ mt: 2, mb: 4 }}>
             <WeatherSearch
                 city={city}
                 setCity={setCity}

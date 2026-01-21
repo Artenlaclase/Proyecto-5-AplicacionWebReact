@@ -12,7 +12,9 @@ export default function RecentSearches({ searches, onSelectSearch, onClearAll })
             sx={{
                 mt: 2,
                 p: 2,
-                backgroundColor: 'rgba(103, 126, 234, 0.05)',
+                backgroundColor: 'rgba(33, 150, 243, 0.05)',
+                borderLeft: '3px solid',
+                borderColor: 'primary.main',
             }}
         >
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>

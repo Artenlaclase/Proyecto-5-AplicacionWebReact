@@ -11,8 +11,9 @@ export default function WeatherDisplay({ weather }) {
         <Card
             sx={{
                 mt: 2,
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg, #2196f3 0%, #1976d2 100%)',
                 color: 'white',
+                boxShadow: 3,
             }}
         >
             <CardContent>
