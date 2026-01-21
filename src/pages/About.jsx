@@ -239,12 +239,6 @@ export const About = () => {
         </Grid>
       </Grid>
 
-      {/* Footer */}
-      <Box sx={{ textAlign: 'center', mt: 6, py: 3 }}>
-        <Typography variant="body2" color="text.secondary">
-          © 2026 Raúl Rosales Rebolledo. Proyecto desarrollado como parte del Bootcamp UDD 13.
-        </Typography>
-      </Box>
     </Container>
   );
 }
