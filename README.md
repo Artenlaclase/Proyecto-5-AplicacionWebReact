@@ -248,4 +248,4 @@ Las contribuciones, issues y solicitudes de funcionalidades son bienvenidas. Si�
 
 *Este proyecto fue realizado como parte del Bootcamp UDD 13, con el objetivo de aprender y aplicar conceptos clave en el desarrollo de aplicaciones web con React.*
 
-**Desarrollado con ❤️ por Raúl Rosales R.**
+**Desarrollado por Raúl Rosales R.**
