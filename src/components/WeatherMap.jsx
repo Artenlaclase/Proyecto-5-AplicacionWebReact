@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import { Card, CardContent, Typography, Box, ToggleButtonGroup, ToggleButton } from '@mui/material';
-import { Map as MapIcon } from '@mui/icons-material';
+import { Card, CardContent, Typography, Box, ToggleButtonGroup, ToggleButton, Chip } from '@mui/material';
+import { Map as MapIcon, Thermostat, WaterDrop, Air } from '@mui/icons-material';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -24,97 +24,85 @@ function MapUpdater({ center }) {
     return null;
 }
 
-// Componente para manejar cambios de capa dinámica
-function WeatherLayerUpdater({ layerUrl }) {
-    const map = useMap();
-    const layerRef = useRef(null);
-
-    useEffect(() => {
-        // Remover capa anterior si existe
-        if (layerRef.current) {
-            map.removeLayer(layerRef.current);
-        }
-
-        // Crear nueva capa meteorológica
-        layerRef.current = L.tileLayer(layerUrl, {
-            attribution: '&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>',
-            opacity: 0.6,
-        });
-
-        // Agregar nueva capa al mapa
-        layerRef.current.addTo(map);
-
-        // Cleanup: remover capa cuando el componente se desmonte
-        return () => {
-            if (layerRef.current) {
-                map.removeLayer(layerRef.current);
-            }
-        };
-    }, [layerUrl, map]);
-
-    return null;
-}
-
-export default function WeatherMap({ lat, lon, city, country }) {
-    const [mapLayer, setMapLayer] = useState('temp');
-    const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || 'demo'; // Usa API key de OpenWeatherMap
-    
+export default function WeatherMap({ lat, lon, city, country, weather }) {
+    const [mapStyle, setMapStyle] = useState('standard');
     const position = [lat, lon];
 
-    const layers = {
-        temp: {
-            url: `https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${API_KEY}`,
-            label: 'Temperatura'
+    const mapStyles = {
+        standard: {
+            url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            label: 'Estándar'
         },
-        precipitation: {
-            url: `https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${API_KEY}`,
-            label: 'Precipitación'
+        topo: {
+            url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+            attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
+            label: 'Topográfico'
         },
-        clouds: {
-            url: `https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${API_KEY}`,
-            label: 'Nubes'
-        },
-        wind: {
-            url: `https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${API_KEY}`,
-            label: 'Viento'
+        satellite: {
+            url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
+            label: 'Satélite'
         }
     };
 
-    const handleLayerChange = (event, newLayer) => {
-        if (newLayer !== null) {
-            setMapLayer(newLayer);
+    const handleStyleChange = (event, newStyle) => {
+        if (newStyle !== null) {
+            setMapStyle(newStyle);
         }
     };
 
     return (
         <Card sx={{ height: '100%' }}>
             <CardContent>
-                <Box display="flex" alignItems="center" gap={1} mb={2}>
-                    <MapIcon color="primary" sx={{ fontSize: 28 }} />
-                    <Typography variant="h6" fontWeight="bold">
-                        Mapa Meteorológico
-                    </Typography>
+                <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+                    <Box display="flex" alignItems="center" gap={1}>
+                        <MapIcon color="primary" sx={{ fontSize: 28 }} />
+                        <Typography variant="h6" fontWeight="bold">
+                            Ubicación y Mapa
+                        </Typography>
+                    </Box>
                 </Box>
+
+                {weather && (
+                    <Box sx={{ mb: 2, display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
+                        <Chip 
+                            icon={<Thermostat />} 
+                            label={`${weather.temp}°C`} 
+                            color="primary" 
+                            size="small"
+                        />
+                        <Chip 
+                            icon={<Air />} 
+                            label={`${weather.windKph} km/h`} 
+                            color="info" 
+                            size="small"
+                        />
+                        <Chip 
+                            icon={<WaterDrop />} 
+                            label={`${weather.humidity}%`} 
+                            color="secondary" 
+                            size="small"
+                        />
+                    </Box>
+                )}
 
                 <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
                     <ToggleButtonGroup
-                        value={mapLayer}
+                        value={mapStyle}
                         exclusive
-                        onChange={handleLayerChange}
+                        onChange={handleStyleChange}
                         size="small"
                         sx={{ flexWrap: 'wrap' }}
                     >
-                        <ToggleButton value="temp">
-                            Temp
+                        <ToggleButton value="standard">
+                            Estándar
                         </ToggleButton>
-                        <ToggleButton value="precipitation">
-                            Lluvia
+                        <ToggleButton value="topo">
+                            Topográfico
                         </ToggleButton>
-                        <ToggleButton value="clouds">
-                            Nubes
-                        </ToggleButton>
-                        <ToggleButton value="wind">
-                            Viento
+                        <ToggleButton value="satellite">
+                            Satélite
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </Box>
@@ -127,21 +115,30 @@ export default function WeatherMap({ lat, lon, city, country }) {
                 }}>
                     <MapContainer 
                         center={position} 
-                        zoom={8} 
+                        zoom={10} 
                         style={{ height: '100%', width: '100%' }}
-                        scrollWheelZoom={false}
+                        scrollWheelZoom={true}
+                        key={mapStyle}
                     >
                         <TileLayer
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            attribution={mapStyles[mapStyle].attribution}
+                            url={mapStyles[mapStyle].url}
                         />
-                        <WeatherLayerUpdater layerUrl={layers[mapLayer].url} />
                         <Marker position={position}>
                             <Popup>
                                 <strong>{city}</strong><br/>
                                 {country}<br/>
-                                Lat: {lat.toFixed(4)}<br/>
-                                Lon: {lon.toFixed(4)}
+                                {weather && (
+                                    <>
+                                        <br/>
+                                        <strong>Temperatura:</strong> {weather.temp}°C<br/>
+                                        <strong>Condición:</strong> {weather.conditionText}<br/>
+                                        <strong>Viento:</strong> {weather.windKph} km/h {weather.windDir}<br/>
+                                        <strong>Humedad:</strong> {weather.humidity}%<br/>
+                                    </>
+                                )}
+                                <br/>
+                                <small>Lat: {lat.toFixed(4)}, Lon: {lon.toFixed(4)}</small>
                             </Popup>
                         </Marker>
                         <MapUpdater center={position} />
@@ -149,7 +146,7 @@ export default function WeatherMap({ lat, lon, city, country }) {
                 </Box>
 
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1, textAlign: 'center' }}>
-                    Capa actual: {layers[mapLayer].label}
+                    Estilo de mapa: {mapStyles[mapStyle].label}
                 </Typography>
             </CardContent>
         </Card>

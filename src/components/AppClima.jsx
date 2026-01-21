@@ -283,7 +283,7 @@ export default function AppClima() {
                         </Grid>
                     )}
                     <Grid item xs={12}>
-                        <WeatherMap lat={weather.lat} lon={weather.lon} city={weather.city} country={weather.country} />
+                        <WeatherMap lat={weather.lat} lon={weather.lon} city={weather.city} country={weather.country} weather={weather} />
                     </Grid>
                 </Grid>
             )}
