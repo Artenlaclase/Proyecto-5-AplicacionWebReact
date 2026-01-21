@@ -1,5 +1,5 @@
 import { Container, Grid, Card, CardContent, Typography, Box, Chip, Avatar, Divider, List, ListItem, ListItemIcon, ListItemText, Paper } from '@mui/material';
-import { Code, School, Work, EmojiObjects, CloudQueue, Speed, Security, GitHub, LinkedIn, Email } from '@mui/icons-material';
+import { Code, School, Work, EmojiObjects, CloudQueue, Speed, Security, GitHub, LinkedIn } from '@mui/icons-material';
 import profileImage from '../assets/img/raulRosalesR.webp';
 
 export const About = () => {
@@ -27,7 +27,7 @@ export const About = () => {
         sx={{ 
           textAlign: 'center', 
           mb: 6,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
           borderRadius: 4,
           p: 4,
           color: 'white'
@@ -51,12 +51,6 @@ export const About = () => {
           Desarrollador Full Stack
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Chip 
-            icon={<Email />} 
-            label="Contacto" 
-            onClick={() => window.location.href = 'mailto:raulandresrosales@outlook.es'}
-            sx={{ backgroundColor: 'rgba(255,255,255,0.2)', color: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.3)' } }}
-          />
           <Chip 
             icon={<GitHub />} 
             label="GitHub" 
@@ -254,5 +248,5 @@ export const About = () => {
     </Container>
   );
 }
-
+4
 
