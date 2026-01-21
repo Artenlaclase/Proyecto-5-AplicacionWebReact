@@ -4,6 +4,8 @@ import WeatherSearch from './WeatherSearch';
 import WeatherDisplay from './WeatherDisplay';
 import WeatherForecast from './WeatherForecast';
 import MarineInfo from './MarineInfo';
+import AirQuality from './AirQuality';
+import WeatherMap from './WeatherMap';
 import ErrorMessage from './ErrorMessage';
 import LocationSelector from './LocationSelector';
 import RecentSearches from './RecentSearches';
@@ -18,6 +20,7 @@ export default function AppClima() {
     const [weather, setWeather] = useState(null);
     const [forecast, setForecast] = useState([]);
     const [marineData, setMarineData] = useState(null);
+    const [airQuality, setAirQuality] = useState(null);
     const [apiError, setApiError] = useState(null);
     const [locations, setLocations] = useState([]);
     const [showLocationSelector, setShowLocationSelector] = useState(false);
@@ -25,7 +28,7 @@ export default function AppClima() {
 
     // API de búsqueda de ubicaciones
     const SEARCH_API = `https://api.weatherapi.com/v1/search.json?key=${import.meta.env.VITE_API_KEY}&q=${searchQuery}`;
-    const API_WEATHER = `https://api.weatherapi.com/v1/forecast.json?key=${import.meta.env.VITE_API_KEY}&q=${weatherQuery}&days=3`;
+    const API_WEATHER = `https://api.weatherapi.com/v1/forecast.json?key=${import.meta.env.VITE_API_KEY}&q=${weatherQuery}&days=3&aqi=yes`;
     
     const { data: searchData, loading: searchLoading, error: searchError } = useFetch(searchQuery ? SEARCH_API : null);
     const { data, loading, error } = useFetch(weatherQuery ? API_WEATHER : null);
@@ -117,6 +120,13 @@ export default function AppClima() {
                 windKph: day.day.maxwind_kph,
                 humidity: day.day.avghumidity,
             }));
+            
+            // Procesar datos de calidad del aire
+            if (data.current.air_quality) {
+                setAirQuality(data.current.air_quality);
+            } else {
+                setAirQuality(null);
+            }
             
             setWeather(weatherData);
             setForecast(forecastData);
@@ -262,11 +272,19 @@ export default function AppClima() {
                     <Grid item xs={12} md={7}>
                         {forecast.length > 0 && <WeatherForecast forecast={forecast} />}
                     </Grid>
+                    {airQuality && (
+                        <Grid item xs={12} md={6} lg={4}>
+                            <AirQuality airQuality={airQuality} />
+                        </Grid>
+                    )}
                     {marineData && (
-                        <Grid item xs={12}>
+                        <Grid item xs={12} md={6} lg={8}>
                             <MarineInfo marineData={marineData} />
                         </Grid>
                     )}
+                    <Grid item xs={12}>
+                        <WeatherMap lat={weather.lat} lon={weather.lon} city={weather.city} country={weather.country} />
+                    </Grid>
                 </Grid>
             )}
 

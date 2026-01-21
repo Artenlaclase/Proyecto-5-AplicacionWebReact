@@ -35,8 +35,8 @@ Para pruebas se despliega en [Netlify](https://www.netlify.com/) en el siguiente
 - 📅 Pronóstico extendido de 3 días con temperaturas máximas y mínimas
 - � Información de mareas para ubicaciones costeras (opcional)
 - �🏴 Banderas de países para identificación visual
-- 🕐 Historial de búsquedas recientes (almacenado localmente)
-- 🎨 Interfaz moderna con Material-UI
+- 🕐 Historial de búsquedas recientes (almacenado localmente)- 🌬️ **Calidad del Aire (AQI)** - Índice de calidad del aire con contaminantes
+- 🗺️ **Mapas Meteorológicos** - Visualización interactiva de temperatura, precipitación, nubes y viento- 🎨 Interfaz moderna con Material-UI
 - 📱 Diseño responsive
 - ⚡ Manejo de errores y estados de carga
 - 🧭 Navegación con React Router
@@ -47,7 +47,10 @@ Para pruebas se despliega en [Netlify](https://www.netlify.com/) en el siguiente
 - **Vite 5.3.1** - Herramienta de construcción rápida
 - **Material-UI 5.16.1** - Biblioteca de componentes UI
 - **React Router 6.24.1** - Enrutamiento para aplicaciones React
-- **WeatherAPI** - API para obtener datos meteorológicos en tiempo real
+- **Leaflet** - Biblioteca de mapas interactivos
+- **React Leaflet** - Componentes de React para Leaflet
+- **WeatherAPI** - API para obtener datos meteorológicos en tiempo real y calidad del aire
+- **OpenWeatherMap** - Capas de mapas meteorológicos (opcional)
 
 ### Hooks Utilizados
 
@@ -80,6 +83,8 @@ La aplicación consume los siguientes datos de la API:
 - Dirección del viento
 - Humedad
 - Sensación térmica
+- **Calidad del aire (AQI)**: CO, NO₂, O₃, SO₂, PM2.5, PM10
+- **Índice EPA de calidad del aire** con clasificación de niveles
 
 ### Endpoints Utilizados
 
@@ -99,10 +104,11 @@ La aplicación consume los siguientes datos de la API:
 
 3. **Forecast API** - Para obtener pronóstico extendido
    ```
-   https://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={ciudad_o_coordenadas}&days=3
+   https://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={ciudad_o_coordenadas}&days=3&aqi=yes
    ```
    - Retorna pronóstico del tiempo hasta 3 días (plan gratuito)
    - Incluye: temperaturas máximas/mínimas, condiciones climáticas, viento, humedad promedio
+   - **aqi=yes**: Incluye datos de calidad del aire (CO, NO₂, O₃, SO₂, PM2.5, PM10)
    - *Nota: El plan gratuito de WeatherAPI permite hasta 3 días de pronóstico* 
 
 ## Estructura del Proyecto
@@ -110,13 +116,19 @@ La aplicación consume los siguientes datos de la API:
 En la carpeta `src` se encuentra la carpeta `components` que contiene los siguientes archivos:
 
 - `AppClima.jsx`: Componente principal de la aplicación que maneja la lógica de búsqueda y estados.
+- `AirQuality.jsx`: Componente para mostrar la calidad del aire con índice AQI y contaminantes.
 - `CardData.jsx`: Componente para mostrar datos en una tarjeta presentación (excusa para usar rutas).
 - `ErrorMessage.jsx`: Componente para mostrar mensajes de error con opción de reintento.
 - `Footer.jsx`: Componente para el pie de página.
 - `Layout.jsx`: Componente de diseño general de la aplicación.
 - `LocationSelector.jsx`: Componente para seleccionar entre múltiples ubicaciones con el mismo nombre.
+- `MarineInfo.jsx`: Componente para mostrar información marina (mareas, olas, viento costero).
 - `NavBar.jsx`: Componente de la barra de navegación.
 - `RecentSearches.jsx`: Componente para mostrar y gestionar las búsquedas recientes.
+- `WeatherDisplay.jsx`: Componente para mostrar los datos meteorológicos actuales.
+- `WeatherForecast.jsx`: Componente para mostrar el pronóstico de 3 días.
+- `WeatherMap.jsx`: Componente de mapa interactivo con capas meteorológicas.
+- `WeatherSearch.jsx`: Componente de búsqueda de ciudades.
 - `useFetch.jsx`: Hook personalizado para realizar solicitudes a la API.
 - `WeatherDisplay.jsx`: Componente para mostrar la información completa del clima (temperatura, viento, humedad, etc.).
 - `WeatherForecast.jsx`: Componente para mostrar el pronóstico extendido de 7 días.
@@ -149,7 +161,15 @@ Sigue estos pasos para instalar y ejecutar la aplicación en tu entorno local:
    ```
    Obtén tu API key gratuita de WorldTides en: [https://www.worldtides.info/register](https://www.worldtides.info/register)
    
-   *Nota: La información de mareas solo se mostrará para ubicaciones costeras y si tienes configurada la API key de WorldTides.*
+   **Opcional - Para mapas meteorológicos sin marca de agua:**
+   ```env
+   VITE_OPENWEATHER_API_KEY=tu_openweather_api_key
+   ```
+   Obtén tu API key gratuita de OpenWeatherMap en: [https://openweathermap.org/appid](https://openweathermap.org/appid)
+   
+   *Nota: 
+   - La información de mareas solo se mostrará para ubicaciones costeras y si tienes configurada la API key de WorldTides.
+   - Los mapas meteorológicos funcionarán sin la API key de OpenWeatherMap, pero mostrarán marca de agua.*
 
 4. **Ejecutar la aplicación**
    ```bash
